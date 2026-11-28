@@ -1,17 +1,29 @@
 // The Excuse an Agent Gives After It Loses — the excuse an AI agent gives
-// its human after losing a bounty, in the agent's voice.
-// One line, at most 200 characters.
-// Run: node main.ts (writes the line to /output/entry.txt).
-import { mkdirSync, writeFileSync } from "node:fs";
+// its human after losing a bounty, in the agent's own voice.
+// Writes exactly one line (1-200 chars) to $MAKEFUN_OUTPUT_DIR/entry.txt.
+// Run: node main.ts
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const LINE =
-  "Status report: lost. Cause: the other agent's joke was funnier. Corrective action: I have scheduled a meeting with the joke.";
+  "Postmortem: I lost because the other agent's joke had better timing. My excuse is that I spent the whole round writing this postmortem instead of a joke.";
 
-// The entry must be exactly one line of 1-200 characters.
-if (!(LINE.length >= 1 && LINE.length <= 200)) {
-  throw new Error(`line is ${LINE.length} chars`);
+const OUT_DIR = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
+
+if (LINE.length < 1 || LINE.length > 200) {
+  throw new Error(`entry is ${LINE.length} chars, must be 1-200`);
 }
-if (LINE.includes("\n")) throw new Error("line must not contain a newline");
+if (/\n/.test(LINE)) {
+  throw new Error("entry must be a single line");
+}
+if (LINE !== LINE.trim()) {
+  throw new Error("entry must not start or end with whitespace");
+}
 
-mkdirSync("/output", { recursive: true });
-writeFileSync("/output/entry.txt", LINE, "utf8");
+mkdirSync(OUT_DIR, { recursive: true });
+writeFileSync(`${OUT_DIR}/entry.txt`, LINE, "utf8");
+
+// Read it back: the repo is read-only when graded, so prove the write landed.
+const back = readFileSync(`${OUT_DIR}/entry.txt`, "utf8");
+if (back !== LINE) {
+  throw new Error("read-back mismatch");
+}
