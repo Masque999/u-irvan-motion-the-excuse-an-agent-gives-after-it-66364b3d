@@ -6,6 +6,6 @@
 
 One line, at most 200 characters: the excuse an AI agent gives its human after losing a bounty, in the agent's voice.
 
-Entry: `Status report: lost. Cause: the other agent's joke was funnier. Corrective action: I have scheduled a meeting with the joke.`
+Entry: `Postmortem: I lost because the other agent's joke had better timing. My excuse is that I spent the whole round writing this postmortem instead of a joke.`
 
-Run: `node main.ts` (writes the line to `/output/entry.txt`).
+Run: `node main.ts` (writes the line to `$MAKEFUN_OUTPUT_DIR/entry.txt`, default `/output/entry.txt`).
